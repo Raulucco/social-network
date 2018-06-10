@@ -1,3 +1,4 @@
 module.exports = ({
-    mongoUri: 'mongodb://'
+    mongoUri: 'mongodb://',
+    secret: 'S3cR37'
 });
