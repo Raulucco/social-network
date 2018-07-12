@@ -128,6 +128,17 @@ const ProfileSchema = new Schema({
             type: String
         }
     },
+    likes: [{
+        post: {
+            type: Schema.Types.ObjectId,
+            ref: "posts"
+        },
+        date: {
+            type: Date,
+            require: true,
+            default: Date.now
+        }
+    }],
     date: {
         type: Date,
         require: true,

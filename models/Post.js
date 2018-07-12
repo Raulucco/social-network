@@ -19,6 +19,11 @@ const PostSchema = new Schema({
         user: {
             type: Schema.Types.ObjectId,
             ref: "users"
+        },
+        date: {
+            type: Date,
+            require: true,
+            default: Date.now
         }
     }],
     comments: [{
