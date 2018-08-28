@@ -1,6 +1,11 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
+import { withRouter } from "react-router-dom";
+import { connect } from "react-redux";
+import { loginUser } from "../../actions/auth";
+import FormControl from "../common/FormControl";
 
-export default class Login extends Component {
+export class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -18,8 +23,27 @@ export default class Login extends Component {
 
   onSubmit(e) {
     e.preventDefault();
+    this.props.loginUser(this.state);
   }
+
+  componentWillReceiveProps(props) {
+    if (props.auth && props.auth.isAuthenticated) {
+      this.props.history.push("/dashboard");
+    }
+
+    if (props.errors) {
+      this.setState({ errors: props.errors });
+    }
+  }
+
+  componentDidMount() {
+    if (this.props.auth && this.props.auth.isAuthenticated) {
+      this.props.history.push("/dashboard");
+    }
+  }
+
   render() {
+    const { errors } = this.state;
     return (
       <div className="login">
         <div className="container">
@@ -30,26 +54,22 @@ export default class Login extends Component {
                 Sign in to your DevConnector account
               </p>
               <form onSubmit={this.onSubmit}>
-                <div className="form-group">
-                  <input
-                    type="email"
-                    className="form-control form-control-lg"
-                    placeholder="Email Address"
-                    name="email"
-                    value={this.state.email}
-                    onChange={this.onChange}
-                  />
-                </div>
-                <div className="form-group">
-                  <input
-                    type="password"
-                    className="form-control form-control-lg"
-                    placeholder="Password"
-                    name="password"
-                    value={this.state.password}
-                    onChange={this.onChange}
-                  />
-                </div>
+                <FormControl
+                  name="email"
+                  type="email"
+                  onChange={this.onChange}
+                  value={this.state.email}
+                  placeholder="Email Address"
+                  error={errors.email}
+                />
+                <FormControl
+                  name="password"
+                  type="password"
+                  onChange={this.onChange}
+                  value={this.state.password}
+                  placeholder=""
+                  error={errors.password}
+                />
                 <input type="submit" className="btn btn-info btn-block mt-4" />
               </form>
             </div>
@@ -59,3 +79,19 @@ export default class Login extends Component {
     );
   }
 }
+
+Login.propTypes = {
+  loginUser: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired,
+  errors: PropTypes.object.isRequired
+};
+
+const mapStateProps = state => ({
+  auth: state.auth,
+  errors: state.errors
+});
+
+export default connect(
+  mapStateProps,
+  { loginUser }
+)(withRouter(Login));
